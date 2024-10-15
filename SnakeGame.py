@@ -7,19 +7,22 @@ class Snake(GameBase):
         super().__init__(rows, cols, size, refresh_rate)
         
         self.apple = []
-        self.snake = []
+        self.add_apple()
 
+        self.snake = []
         snake_head = [rows//2, cols//2]
         self.snake.append(snake_head)
         self.create_block(snake_head, "black")
-        self.add_apple()
 
     def game_loop(self):
+
+        # Update the snake
         self.move_snake()
       
         # If there's no apple make a new one
         if(self.apple == []):
            self.add_apple()
+
 
     def add_apple(self):
         success = False
@@ -48,24 +51,26 @@ class Snake(GameBase):
         elif(user_input == "w"):
             new_head[1] -= 1
 
-        # If ran into self, lost
+        # Prevent movement into self or wall
         if(self.inside_grid(new_head) and not new_head in self.snake[1:]):
 
-            # If we ate an apple delete it, else delete the tail
+            # If we eat an apple delete it, else delete the tail
             if(new_head == self.apple):
                 self.delete_block(self.apple)
                 self.apple = []
             else:
                 self.delete_block(self.snake.pop())
-                
+
             # Update where the new head is
             self.create_block(new_head, "white")
             self.snake.insert(0, new_head)
 
-            # Change the second element to a different color
+            # Change the second segment to a different color
             if(len(self.snake) > 1):
                 self.change_block_color(self.snake[1], "gray")
 
+
+
 if __name__ == "__main__":
-    game = Snake(20, 15, 20)
+    game = Snake(20, 15, 30)
     game.start_game()
