@@ -11,15 +11,11 @@ class Snake(GameBase):
 
         snake_head = [int(rows/2), int(cols/2)]
         self.snake.append(snake_head)
-        self.create_square(snake_head, "black")
+        self.create_block(snake_head, "black")
         self.add_apple()
 
     def game_loop(self):
-        # Game logic methods
         self.user_action()
-
-        # Continue game loop again
-        self.root.after(self.refresh_rate, self.game_loop)
 
     def add_apple(self):
         success = False
@@ -29,12 +25,11 @@ class Snake(GameBase):
             row = random.randint(0, self.rows-1)
             col = random.randint(0, self.cols-1)
             apple_cord = [row,col]
-            success = not self.square_exists(apple_cord)
+            success = not self.block_exists(apple_cord)
 
         self.apple = apple_cord
-        self.create_square(apple_cord, "red", "circle")
+        self.create_block(apple_cord, "red", "circle")
         
-
     def user_action(self):
         user_input = self.get_user_input()
         snake_head = self.snake[0]
@@ -55,24 +50,24 @@ class Snake(GameBase):
 
             # If we ate an apple delete it, else delete the tail
             if(new_head == self.apple):
-                self.delete_square(self.apple)
+                self.delete_block(self.apple)
                 self.apple = []
             else:
-                self.delete_square(tail)
+                self.delete_block(tail)
                 self.snake.pop(-1)
 
             # Update where the new head is
-            self.create_square(new_head, "white")
+            self.create_block(new_head, "white")
             self.snake.insert(0, new_head)
 
             # Change the second element to a different color
             if(len(self.snake) > 1):
-                self.change_color(self.snake[1], "gray")
+                self.change_block_color(self.snake[1], "gray")
 
             # If there's no apple make a new one
             if(self.apple == []):
                 self.add_apple()
 
 if __name__ == "__main__":
-    game = Snake(20, 15, 40)
+    game = Snake(20, 15, 20)
     game.start_game()
