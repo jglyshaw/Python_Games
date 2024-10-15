@@ -9,13 +9,17 @@ class Snake(GameBase):
         self.apple = []
         self.snake = []
 
-        snake_head = [int(rows/2), int(cols/2)]
+        snake_head = [rows//2, cols//2]
         self.snake.append(snake_head)
         self.create_block(snake_head, "black")
         self.add_apple()
 
     def game_loop(self):
-        self.user_action()
+        self.move_snake()
+      
+        # If there's no apple make a new one
+        if(self.apple == []):
+           self.add_apple()
 
     def add_apple(self):
         success = False
@@ -30,10 +34,9 @@ class Snake(GameBase):
         self.apple = apple_cord
         self.create_block(apple_cord, "red", "circle")
         
-    def user_action(self):
+    def move_snake(self):
         user_input = self.get_user_input()
         snake_head = self.snake[0]
-        tail = self.snake[-1]
         new_head = list(snake_head)
 
         if(user_input == "d"):
@@ -53,9 +56,8 @@ class Snake(GameBase):
                 self.delete_block(self.apple)
                 self.apple = []
             else:
-                self.delete_block(tail)
-                self.snake.pop(-1)
-
+                self.delete_block(self.snake.pop())
+                
             # Update where the new head is
             self.create_block(new_head, "white")
             self.snake.insert(0, new_head)
@@ -63,10 +65,6 @@ class Snake(GameBase):
             # Change the second element to a different color
             if(len(self.snake) > 1):
                 self.change_block_color(self.snake[1], "gray")
-
-            # If there's no apple make a new one
-            if(self.apple == []):
-                self.add_apple()
 
 if __name__ == "__main__":
     game = Snake(20, 15, 20)
