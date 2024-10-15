@@ -1,0 +1,67 @@
+import tkinter as tk
+import random
+
+class GameBase:
+    def __init__(self, rows, cols, size):
+        self.root = tk.Tk()
+        self.root.title("Your Game")
+        self.canvas = tk.Canvas(self.root, bg='black', width=rows*size, height=cols*size)
+        self.canvas.pack()
+        self.rows, self.cols, self.size = rows, cols, size
+        self.grid = [[0]*cols for _ in range(rows)]
+        self.user_input = 0
+        self.root.bind("<KeyPress>", self.on_keypress)
+        self.apple, self.snake = [], [[rows//2, cols//2]]
+        self.create_block(self.snake[0], "white")
+        self.add_apple()
+
+    def block_exists(self, cord):
+        return self.grid[cord[0]][cord[1]] != 0
+
+    def create_block(self, cord, color):
+        x, y = cord[0] * self.size, cord[1] * self.size
+        self.grid[cord[0]][cord[1]] = self.canvas.create_rectangle(x, y, x + self.size, y + self.size, fill=color, outline="black")
+
+    def delete_block(self, cord):
+        self.canvas.delete(self.grid[cord[0]][cord[1]])
+        self.grid[cord[0]][cord[1]] = 0
+
+    def inside_grid(self, cord):
+        return 0 <= cord[0] < self.rows and 0 <= cord[1] < self.cols
+
+    def start_game(self):
+        self.game_loop()
+        self.root.mainloop()
+
+    def game_loop(self):
+        self.user_action()
+        self.root.after(100, self.game_loop)
+
+    def on_keypress(self, event):
+        self.user_input = event.keysym
+
+    def add_apple(self):
+        while True:
+            cord = [random.randint(0, self.rows-1), random.randint(0, self.cols-1)]
+            if not self.block_exists(cord):
+                self.apple = cord
+                self.create_block(cord, "red")
+                break
+
+    def user_action(self):
+        directions = {"d": [1, 0], "a": [-1, 0], "s": [0, 1], "w": [0, -1]}
+        if self.user_input in directions:
+            new_head = [self.snake[0][i] + directions[self.user_input][i] for i in range(2)]
+            if self.inside_grid(new_head) and new_head not in self.snake[1:]:
+                if new_head == self.apple:
+                    self.delete_block(self.apple)
+                    self.apple = []
+                else:
+                    self.delete_block(self.snake.pop())
+                self.create_block(new_head, "white")
+                self.snake.insert(0, new_head)
+                if not self.apple:
+                    self.add_apple()
+
+if __name__ == "__main__":
+    GameBase(20, 15, 20).start_game()
