@@ -56,11 +56,7 @@ class GameBase:
 
     # Check if a cordinate is within the grid.
     def inside_grid(self, cord):
-        if(cord[0] > self.rows-1 or cord[0] < 0):
-            return False
-        if(cord[1] > self.cols-1 or cord[1] < 0):
-            return False
-        return True
+        return 0 <= cord[0] < self.rows and 0 <= cord[1] < self.cols
 
     def start_game(self):
         self.run_game()
