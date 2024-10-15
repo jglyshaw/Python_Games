@@ -17,7 +17,7 @@ class GameBase:
         self.rows = rows
         self.cols = cols
         self.square_size = size
-        self.grid = [[0]*self.rows for i in range(self.cols)]
+        self.grid = [[0]*self.cols for i in range(self.rows)]
 
         # Establish the refresh rate
         self.refresh_rate = refresh_rate
@@ -33,7 +33,7 @@ class GameBase:
     # Create a square at a given cordinate.
     def create_square(self, cord, color):
         if(self.square_exists(cord)):
-            raise Exception("error square there already exists")
+            raise Exception("ERROR: square there already exists.")
         else:
             x = cord[0] * self.square_size
             y = cord[1] * self.square_size
@@ -42,7 +42,7 @@ class GameBase:
     # Delete a square at a given cordinate.
     def delete_square(self, cord):
         if(not self.square_exists(cord)):
-            raise Exception("error no square there exists")
+            raise Exception("ERROR: no square there exists.")
         else:
             self.canvas.delete(self.grid[cord[0]][cord[1]]) 
             self.grid[cord[0]][cord[1]] = 0
@@ -64,4 +64,9 @@ class GameBase:
             return False
         return True
 
+    def start_game(self):
+        self.game_loop()
+        self.root.mainloop()
 
+    def game_loop(self):
+        raise Exception("This Function is abstract.")
