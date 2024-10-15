@@ -1,7 +1,7 @@
 import tkinter as tk
 import time
 
-class Game:
+class GameBase:
     def __init__(self, rows, cols, size, refresh_rate = 100):
         
         # Set up root
@@ -10,7 +10,7 @@ class Game:
 
         # Setup the canvas
         self.canvas = tk.Canvas(self.root)
-        self.canvas.configure(width=len(self.grid[0])*self.square_size, height=len(self.grid)*self.square_size)
+        self.canvas.configure(width=rows*size, height=cols*size)
         self.canvas.pack()
 
         # Establish game size and grid
@@ -24,9 +24,7 @@ class Game:
 
         # To hold user input
         self.user_input = 0
-
-        self.snake = []
-
+        self.root.bind("<KeyPress>", self.on_keypress)
 
     # Determines if a square already exists at a cordinate
     def square_exists(self, cord):
@@ -54,23 +52,11 @@ class Game:
         self.user_input = event.keysym
         print(self.user_input)
 
-    def start_game(self):
-        self.root.bind("<KeyPress>", self.on_keypress)
-        
-        self.snake.append([5,5])
-        head = self.snake[0]
-        self.create_square(head, "black")
-        
-        self.game_loop()
-        self.root.mainloop()
-    
-    def game_loop(self):
-        # Game logic methods
-        self.user_action()
+    # Return last user input.
+    def get_user_input(self):
+        return self.user_input
 
-        # Continue game loop again
-        self.root.after(self.refresh_rate, self.game_loop)
-
+    # Check if a cordinate is within the grid.
     def inside_grid(self, cord):
         if(cord[0] > self.rows-1 or cord[0] < 0):
             return False
@@ -78,31 +64,4 @@ class Game:
             return False
         return True
 
-    def user_action(self):
 
-        head = self.snake[0]
-        tail = self.snake[-1]
-        new_head = list(head)
-
-        if(self.user_input == "d"):
-            new_head[0] += 1
-        elif(self.user_input == "a"):
-            new_head[0] -= 1
-        elif(self.user_input == "s"):
-            new_head[1] += 1
-        elif(self.user_input == "w"):
-            new_head[1] -= 1
-
-        if(self.inside_grid(new_head)):
-            # Delete last segment
-            self.delete_square(tail)
-            self.snake.pop(-1)
-
-            # Add new segment
-            self.create_square(new_head, "black")
-            self.snake.insert(0, new_head)
-
-
-if __name__ == "__main__":
-    game = Game(20, 20, 50)
-    game.start_game()
