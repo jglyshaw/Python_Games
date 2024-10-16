@@ -1,4 +1,6 @@
 import tkinter as tk
+import random
+
 
 class GameBase:
     def __init__(self, rows, cols, size, refresh_rate):
@@ -65,6 +67,16 @@ class GameBase:
     def start_game(self):
         self.__run_game()
         self.__root.mainloop()
+
+    def delete_all(self):
+        self.__canvas.delete("all")
+        self.__grid = [[0]*self.cols for i in range(self.rows)]
+
+    def random_row(self):
+        return random.randint(0, self.rows-1)
+
+    def random_col(self):
+        return random.randint(0, self.cols-1)
 
     def __run_game(self):
        self.game_loop()
