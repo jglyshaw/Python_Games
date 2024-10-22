@@ -28,7 +28,7 @@ class GameBase:
         self.__root.bind("<KeyPress>", self.__on_keypress)
 
         # To hold references to images
-        self.__images = []
+        self.__images = dict()
 
     # Determines if a block already exists at a cordinate
     def block_exists(self, cord):
@@ -51,20 +51,24 @@ class GameBase:
     def create_image_block(self, cord, image_path):
         if self.block_exists(cord):
             raise Exception("ERROR: block there already exists.")
-        x, y = cord[0] * self.__block_size, cord[1] * self.__block_size
-        image = tk.PhotoImage(file=image_path)
-        # Calculate the resize factors (target dimensions should be your block size)
-        width_factor = image.width() // self.__block_size
-        height_factor = image.height() // self.__block_size
+        
+        x = cord[0] * self.__block_size
+        y = cord[1] * self.__block_size
+        image = 0
 
-        # Resize the image (ensure factors are positive)
-        if width_factor > 0 and height_factor > 0:
-            image = image.subsample(width_factor, height_factor)
+        if(image_path in self.__images):
+            image = self.__images[image_path]
         else:
-            image = image.zoom(-width_factor, -height_factor)
-
+            image = tk.PhotoImage(file="apple.png")
+            width_factor = image.width() // self.__block_size
+            height_factor = image.height() // self.__block_size
+            if width_factor > 0 and height_factor > 0:
+                image = image.subsample(width_factor, height_factor)
+            else:
+                image = image.zoom(-width_factor, -height_factor)
+                self.__images[image_path] = image
+            
         self.__grid[cord[0]][cord[1]] = self.__canvas.create_image(x, y, anchor="nw", image=image)
-        self.__images.append(image)
     
     # Delete a block at a given cordinate.
     def delete_block(self, cord):

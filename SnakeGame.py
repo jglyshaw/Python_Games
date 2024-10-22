@@ -1,4 +1,5 @@
 from GameBase import GameBase
+import os
 
 class Snake(GameBase):
 
@@ -6,6 +7,10 @@ class Snake(GameBase):
         super().__init__(rows, cols, size, refresh_rate)
         self.apple = []
         self.snake = []
+
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        self.apple_image = base_path + "apple.png"
+
         self.setup_game()
 
     def setup_game(self):
@@ -37,7 +42,7 @@ class Snake(GameBase):
             success = not self.block_exists(apple_cord)
 
         self.apple = apple_cord
-        self.create_block(apple_cord, "red", "circle")
+        self.create_image_block(apple_cord, self.apple_image)
         
     def move_snake(self):
         user_input = self.get_user_input()
