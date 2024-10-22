@@ -27,6 +27,9 @@ class GameBase:
         self.__user_input = 0
         self.__root.bind("<KeyPress>", self.__on_keypress)
 
+        # To hold references to images
+        self.__images = []
+
     # Determines if a block already exists at a cordinate
     def block_exists(self, cord):
         return self.__grid[cord[0]][cord[1]] != 0
@@ -43,6 +46,25 @@ class GameBase:
                 self.__grid[cord[0]][cord[1]] = self.__canvas.create_oval(x, y, x + self.__block_size, y + self.__block_size, fill=color, outline="black")
             else:
                 self.__grid[cord[0]][cord[1]] = self.__canvas.create_rectangle(x, y, x + self.__block_size, y + self.__block_size, fill=color, outline="black")
+
+    # Create a block with an image
+    def create_image_block(self, cord, image_path):
+        if self.block_exists(cord):
+            raise Exception("ERROR: block there already exists.")
+        x, y = cord[0] * self.__block_size, cord[1] * self.__block_size
+        image = tk.PhotoImage(file=image_path)
+        # Calculate the resize factors (target dimensions should be your block size)
+        width_factor = image.width() // self.__block_size
+        height_factor = image.height() // self.__block_size
+
+        # Resize the image (ensure factors are positive)
+        if width_factor > 0 and height_factor > 0:
+            image = image.subsample(width_factor, height_factor)
+        else:
+            image = image.zoom(-width_factor, -height_factor)
+
+        self.__grid[cord[0]][cord[1]] = self.__canvas.create_image(x, y, anchor="nw", image=image)
+        self.__images.append(image)
     
     # Delete a block at a given cordinate.
     def delete_block(self, cord):
